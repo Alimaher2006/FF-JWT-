@@ -10,10 +10,6 @@ import json
 from colorama import init
 import warnings
 from urllib3.exceptions import InsecureRequestWarning
-from flask_cors import CORS
-
-app = Flask(__name__)
-CORS(app)  # يسمح لأي دومين
 
 # Disable SSL warning
 warnings.filterwarnings("ignore", category=InsecureRequestWarning)
@@ -24,6 +20,10 @@ AES_IV = b'6oyZDr22E3ychjM%'
 
 # Init colorama
 init(autoreset=True)
+
+# Flask setup
+app = Flask(__name__)
+cache = Cache(app, config={'CACHE_TYPE': 'SimpleCache', 'CACHE_DEFAULT_TIMEOUT': 25200})
 
 def get_token(password, uid):
     try:
