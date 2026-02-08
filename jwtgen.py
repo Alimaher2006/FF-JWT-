@@ -1,6 +1,5 @@
 from flask import Flask, jsonify, request
 from flask_caching import Cache
-from flask_cors import CORS
 import requests
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad
@@ -24,7 +23,13 @@ init(autoreset=True)
 
 # Flask setup
 app = Flask(__name__)
-CORS(app)
+@app.after_request
+def add_cors_headers(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    return response
+
 cache = Cache(app, config={'CACHE_TYPE': 'SimpleCache', 'CACHE_DEFAULT_TIMEOUT': 25200})
 
 def get_token(password, uid):
@@ -191,6 +196,13 @@ def get_single_response():
             "error": f"Internal error occurred: {str(e)}"
         }), 500
 
+@app.route("/<path:path>", methods=["OPTIONS"])
+def options_handler(path):
+    response = app.make_response("")
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    return response
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000)
