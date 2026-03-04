@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, flask-cors
 from flask_caching import Cache
 import requests
 from Crypto.Cipher import AES
@@ -23,7 +23,7 @@ init(autoreset=True)
 
 # Flask setup
 app = Flask(__name__)
-
+CORS(app)
 cache = Cache(app, config={'CACHE_TYPE': 'SimpleCache', 'CACHE_DEFAULT_TIMEOUT': 25200})
 
 def get_token(password, uid):
